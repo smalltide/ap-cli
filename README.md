@@ -6,9 +6,12 @@ This package provides a command line interface to create, build, deploy AWS Batc
 2. boto3 (AWS SDK for Python)
 
 ### AP CLI Command
+- [x] ap --version
+- [x] ap --help
 - [ ] ap job create [--name] [--language] (for create a new AP template)
 - [ ] ap job build (for AP local build)
 - [ ] ap job run (for AP local run)
+- [ ] ap job push (plan?)
 - [ ] ap job deploy (for deploy AP to Cloud workflow)
 - [ ] ap job info (for get AP info)
 - [ ] ap job log [--watch] (for retrieve AP log)
@@ -16,8 +19,8 @@ This package provides a command line interface to create, build, deploy AWS Batc
 - [ ] ap notify [subcommand] (for create AP notify)
 - [ ] ap resource [subcommand] (for create aws resource)
 - [ ] ap switch [subcommand] (for switch env)
-- [ ] ap --help
-- [ ] ap --version
+
+
 
 install virtualenv (if need)
 ```

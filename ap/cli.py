@@ -29,6 +29,7 @@ class APCLI(click.MultiCommand):
 
 
 @click.command(cls=APCLI)
+@click.version_option()
 def cli():
-    """This package provides a command line interface to create, build, deploy AP Job"""
+    """This package provides a command line interface to use the create, build, deploy, log, notify and resource manager feature of AP2.0"""
     pass
