@@ -21,7 +21,6 @@ This package provides a command line interface to create, build, deploy AWS Batc
 - [ ] ap switch [subcommand] (for switch env)
 
 
-
 install virtualenv (if need)
 ```
   > cd ap-cli
@@ -36,5 +35,11 @@ install developing ap cli package
   > pip install --editable .
   > which ap
 ```
+install AWS Python SDK (boto3)
+```
+  > . venv/bin/activate (activate venv)
+  > pip install boto3 (install boto3 in venv)
+```
+
 
 

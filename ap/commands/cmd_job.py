@@ -1,9 +1,10 @@
 import click
+from ap.cli import pass_context
 
 
 @click.group()
 def cli():
-    """AP Job, create, build, run, deploy, info and log"""
+    """AP Job, create, build, run, deploy, info, log"""
     pass
 
 
@@ -16,15 +17,18 @@ def create(name, language):
 
 
 @cli.command()
-def build():
+@pass_context
+def build(ctx):
     """Build AP Job Docker Image"""
     click.echo(f'Build')
 
 
 @cli.command()
-def run():
+@pass_context
+def run(ctx):
     """Run AP Job on Local"""
-    click.echo(f'Run')
+    click.secho(f'Run!', fg='green', blink=True)
+    click.echo(vars(ctx))
 
 
 @cli.command()
