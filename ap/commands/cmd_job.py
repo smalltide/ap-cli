@@ -1,6 +1,7 @@
 import click
-from jinja2 import Template
+import os
 from ap.cli import pass_context
+from ap.utils import generate_ap
 
 
 @click.group()
@@ -16,10 +17,18 @@ def cli():
 @pass_context
 def create(ctx, name, language, tag):
     """Create a AP Job Template"""
-    template = Template('Create AP{{ name }}')
-    click.echo(template.render(name='0001'))
-    click.echo(name)
-    click.echo(ctx.templates)
+    target = os.path.join(ctx.home, name)
+    if os.path.exists(target):
+        raise click.ClickException(
+            'Existing directory here, please run new command for an empty folder!')
+
+    template = os.path.join(ctx.templates, language, tag)
+    if not os.path.exists(template):
+        raise click.ClickException(
+            'The template not exists, please choose right language and tag of template')
+
+    parameters = {'APName': name}
+    generate_ap(target, template, parameters)
 
 
 @cli.command()
