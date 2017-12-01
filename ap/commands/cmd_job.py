@@ -1,4 +1,5 @@
 import click
+from jinja2 import Template
 from ap.cli import pass_context
 
 
@@ -9,11 +10,16 @@ def cli():
 
 
 @cli.command()
-@click.option('-n', '--name', help='AP Name or Number')
-@click.option('-l', '--language', help='AP Template Language')
-def create(name, language):
+@click.option('-n', '--name', required=True, help='AP Name or Number')
+@click.option('-l', '--language', required=True, help='AP Template Language')
+@click.option('-t', '--tag', default='default', help='AP Language Tag')
+@pass_context
+def create(ctx, name, language, tag):
     """Create a AP Job Template"""
-    click.echo(f'Create')
+    template = Template('Create AP{{ name }}')
+    click.echo(template.render(name='0001'))
+    click.echo(name)
+    click.echo(ctx.templates)
 
 
 @cli.command()

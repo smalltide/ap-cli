@@ -9,6 +9,8 @@ class Context(object):
 
     def __init__(self):
         self.home = os.getcwd()
+        self.templates = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                      'templates'))
 
 
 cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),

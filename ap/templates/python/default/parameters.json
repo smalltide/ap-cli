@@ -1,0 +1,10 @@
+[
+  {
+    "ParameterKey": "APName",
+    "ParameterValue": "{{ APName }}"
+  },
+  {
+    "ParameterKey": "Queue",
+    "ParameterValue": "APJobQueue"
+  }
+]

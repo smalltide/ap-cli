@@ -27,7 +27,9 @@ install virtualenv (if need)
   > pip3 install virtualenv
   > virtualenv venv
   > . venv/bin/activate (activate venv)
-  > pip install Click (install Click in venv)
+  > pip install Click (install Click, Python CLI Framework in venv)
+  > pip install boto3 (install boto3, AWS Python SDK in venv)
+  > pip install Jinja2 (install Jinja2, Python template Engine in venv)
   > deactivate (if want to leave venv)
 ```
 install developing ap cli package
@@ -35,11 +37,4 @@ install developing ap cli package
   > pip install --editable .
   > which ap
 ```
-install AWS Python SDK (boto3)
-```
-  > . venv/bin/activate (activate venv)
-  > pip install boto3 (install boto3 in venv)
-```
-
-
 

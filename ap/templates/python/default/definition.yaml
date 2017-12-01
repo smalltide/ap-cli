@@ -1,0 +1,97 @@
+###
+AWSTemplateFormatVersion: 2010-09-09
+Description: AP Job definitions 
+
+###
+###---Parameters---
+###
+Parameters:
+  APName:
+    Type: String
+    Description: AP Job Definition Name
+  Queue:
+    Type: String
+    Description: AP Job Queue Name
+
+###
+###---Resources:JobDefinition---
+###
+Resources:
+  APJobDefinition:
+    Type: AWS::Batch::JobDefinition
+    Properties:
+      Type: container
+      JobDefinitionName: !Ref APName
+      ContainerProperties:
+        Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/ap/${APName}:latest
+        Vcpus: 1
+        Memory: 1024
+        JobRoleArn: !GetAtt APJobRole.Arn
+        Command: []
+        Environment: []
+        Ulimits: []
+      RetryStrategy:
+        Attempts: 1
+
+  #========CloudWatch Rules Schedule========#
+  Cron: 
+    Type: AWS::Events::Rule
+    Properties: 
+      Description: !Sub "${APName}-Cron"
+      ScheduleExpression: cron(0/1 * * * ? *)
+      State: "ENABLED"
+      Targets: 
+        - Id: !Sub "${APName}-TriggerBatchAPJob"
+          Arn: !ImportValue TriggerBatchAPJob
+          Input: !Sub "{\"jobDefinition\": \"${APName}\", \"jobQueue\": \"${Queue}\"}"
+
+  PermissionForTriggerBatchAPJob: 
+    Type: "AWS::Lambda::Permission"
+    Properties: 
+      FunctionName: !ImportValue TriggerBatchAPJob
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt Cron.Arn
+
+  APJobRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - ecs-tasks.amazonaws.com
+            Action: 
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: APPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource:
+                  Fn::Sub:
+                    - "${APS3Bucket}/*"
+                    - APS3Bucket: !ImportValue APS3Bucket
+
+#========Outputs========#
+Outputs:
+  APJobDefinition:
+    Description: AP Job Definition
+    Value: !Ref APJobDefinition
+  Cron:
+    Description: AP CloudWatch Rules Schedule
+    Value: !Ref Cron
+  Permission: 
+    Description: AP CloudWatch TriggerBatchAPJob Permission
+    Value: !Ref PermissionForTriggerBatchAPJob
+  APJobRole:
+    Description: AP Job Role
+    Value: !Ref APJobRole
+    
