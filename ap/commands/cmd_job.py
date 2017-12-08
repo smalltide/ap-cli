@@ -1,5 +1,6 @@
 import click
 import os
+from invoke import run as run_command
 from ap.cli import pass_context
 from ap.utils import generate_ap
 
@@ -35,15 +36,24 @@ def create(ctx, name, language, tag):
 @pass_context
 def build(ctx):
     """Build AP Job Docker Image"""
-    click.echo(f'Build')
+    cmd = f'docker build -t ap/{ctx.ap_name} .'
+    result = run_command(cmd, warn=True)
+    if result.ok:
+        click.secho(f'Build AP Successful', fg='green', bold=True)
+    else:
+        click.secho(f'Build AP Failure', fg='red', bold=True)
 
 
 @cli.command()
 @pass_context
 def run(ctx):
     """Run AP Job on Local"""
-    click.secho(f'Run!', fg='green', blink=True)
-    click.echo(vars(ctx))
+    cmd = f'docker run --rm ap/{ctx.ap_name}'
+    result = run_command(cmd, warn=True)
+    if result.ok:
+        click.secho(f'Run AP Successful', fg='green', bold=True)
+    else:
+        click.secho(f'Run AP Failure', fg='red', bold=True)
 
 
 @cli.command()

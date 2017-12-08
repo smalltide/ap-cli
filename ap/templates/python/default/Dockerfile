@@ -9,7 +9,7 @@ COPY run.sh /
 
 WORKDIR $APP_PATH
 
-RUN pip3 install -r requirements.txt
+RUN pip install -r requirements.txt
 
 ENTRYPOINT ["/run.sh"]
 

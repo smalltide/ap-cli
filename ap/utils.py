@@ -1,6 +1,17 @@
 import os
 import click
+import json
 from jinja2 import Environment, FileSystemLoader
+
+
+def read_parameters(file):
+    parameters = None
+
+    if os.path.isfile(file):
+        with open(file) as json_data:
+            parameters = json.load(json_data)
+
+    return parameters
 
 
 def generate_ap(target_folder, template_folder, parameters):
@@ -14,7 +25,9 @@ def generate_ap(target_folder, template_folder, parameters):
         template_path = os.path.join(target_folder, template)
         os.makedirs(os.path.dirname(template_path), exist_ok=True)
         env.get_template(template).stream(parameters).dump(template_path)
+
         if template_path.endswith('.sh'):
             os.chmod(template_path, 0o755)
+
         click.secho(f'  Create  ', nl=False, fg='green')
         click.echo(template)
