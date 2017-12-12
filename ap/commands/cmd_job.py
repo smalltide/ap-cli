@@ -48,7 +48,8 @@ def build(ctx):
 @pass_context
 def run(ctx):
     """Run AP Job on Local"""
-    cmd = f'docker run --rm ap/{ctx.ap_name}'
+    aws_folder = click.get_app_dir('aws', force_posix=True)
+    cmd = f'docker run -e HOME=/home -v {aws_folder}:/home/.aws --rm ap/{ctx.ap_name}'
     result = run_command(cmd, warn=True)
     if result.ok:
         click.secho(f'Run AP Successful', fg='green', bold=True)
@@ -60,6 +61,7 @@ def run(ctx):
 def deploy():
     """Trigger AP Job Travis CI/CD Flow on Cloud"""
     click.echo(f'Deploy')
+    click.echo(click.get_app_dir('aws', force_posix=True))
 
 
 @cli.command()
