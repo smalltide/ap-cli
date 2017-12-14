@@ -3,7 +3,7 @@ import boto3
 s3 = boto3.client('s3')
 
 bucket = 'apcomputeenvironment-aps3bucket-kozgwpitjy0n'
-key = '{{ APName }}'
+key = '{{ name }}'
 
 try:
     response = s3.get_object(Bucket=bucket, Key=key)

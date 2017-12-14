@@ -2,13 +2,15 @@ import click
 import os
 from invoke import run as run_command
 from ap.cli import pass_context
-from ap.utils import generate_ap
+from ap.utils import generate_ap, is_ap
 
 
 @click.group()
-def cli():
+@click.pass_context
+def cli(ctx):
     """AP Job, create, build, run, deploy, info, log"""
-    pass
+    if ctx.invoked_subcommand not in ('create',):
+        is_ap(ctx.obj.configs)
 
 
 @cli.command()
@@ -21,14 +23,14 @@ def create(ctx, name, language, tag):
     target = os.path.join(ctx.home, name)
     if os.path.exists(target):
         raise click.ClickException(
-            'Existing directory here, please run new command for an empty folder!')
+            'Existing directory here, please run create command for an empty folder!')
 
-    template = os.path.join(ctx.templates, language, tag)
+    template = os.path.join(ctx.templates, 'job', language, tag)
     if not os.path.exists(template):
         raise click.ClickException(
             'The template not exists, please choose right language and tag of template')
 
-    parameters = {'APName': name}
+    parameters = {'name': name, 'type': 'job'}
     generate_ap(target, template, parameters)
 
 
@@ -36,7 +38,9 @@ def create(ctx, name, language, tag):
 @pass_context
 def build(ctx):
     """Build AP Job Docker Image"""
-    cmd = f'docker build -t ap/{ctx.ap_name} .'
+    cmd = f'docker image rm ap/{ctx.configs["name"]}'
+    result = run_command(cmd, warn=True)
+    cmd = f'docker build -t ap/{ctx.configs["name"]} .'
     result = run_command(cmd, warn=True)
     if result.ok:
         click.secho(f'Build AP Successful', fg='green', bold=True)
@@ -49,7 +53,7 @@ def build(ctx):
 def run(ctx):
     """Run AP Job on Local"""
     aws_folder = click.get_app_dir('aws', force_posix=True)
-    cmd = f'docker run -e HOME=/home -v {aws_folder}:/home/.aws --rm ap/{ctx.ap_name}'
+    cmd = f'docker run -e HOME=/home -v {ctx.home}/app:{ctx.configs["app_path"]} -v {aws_folder}:/home/.aws --rm ap/{ctx.configs["name"]}'
     result = run_command(cmd, warn=True)
     if result.ok:
         click.secho(f'Run AP Successful', fg='green', bold=True)

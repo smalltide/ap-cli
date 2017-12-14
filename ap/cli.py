@@ -1,7 +1,7 @@
 import os
 import sys
 import click
-from ap.utils import read_parameters
+from ap.utils import read_config
 
 CONTEXT_SETTINGS = dict(auto_envvar_prefix='AP')
 
@@ -12,13 +12,8 @@ class Context(object):
         self.home = os.getcwd()
         self.templates = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                       'templates'))
-        self.ap_name = None
-
-        parameters_file = os.path.join(self.home, 'parameters.json')
-        parameters = read_parameters(parameters_file)
-
-        if parameters:
-            self.ap_name = parameters[0]['ParameterValue']
+        config_file = os.path.join(self.home, '.ap.yml')
+        self.configs = read_config(config_file)
 
 
 cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),

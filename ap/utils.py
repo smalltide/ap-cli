@@ -1,17 +1,27 @@
 import os
 import click
-import json
+import yaml
 from jinja2 import Environment, FileSystemLoader
 
 
-def read_parameters(file):
-    parameters = None
+def read_config(file):
+    configs = None
 
-    if os.path.isfile(file):
-        with open(file) as json_data:
-            parameters = json.load(json_data)
+    if not os.path.isfile(file):
+        return configs
 
-    return parameters
+    with open(file, 'r') as stream:
+        try:
+            configs = yaml.load(stream)
+        except yaml.YAMLError as exc:
+            click.echo(exc)
+
+    return configs
+
+
+def is_ap(config):
+    if not config:
+        raise click.ClickException('Not in AP Folder or AP Config Error!')
 
 
 def generate_ap(target_folder, template_folder, parameters):

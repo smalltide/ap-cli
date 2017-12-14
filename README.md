@@ -10,9 +10,8 @@ This package provides a command line interface to create, build, deploy AWS Batc
 - [x] ap --help
 - [x] ap job create [--name] [--language] (for create a new AP template)
 - [ ] ap job lint (plan?)
-- [ ] ap job build (for AP local build)
-- [ ] ap job run (for AP local run)
-- [ ] ap job push (plan?)
+- [x] ap job build (for AP local build)
+- [x] ap job run (for AP local run)
 - [ ] ap job deploy (for deploy AP to Cloud workflow)
 - [ ] ap job info (for get AP info)
 - [ ] ap job log [--watch] (for retrieve AP log)
@@ -32,6 +31,7 @@ install virtualenv (if need)
   > pip install boto3 (install boto3 in venv, AWS Python SDK)
   > pip install Jinja2 (install Jinja2 in venv, Python template Engine)
   > pip install invoke (install invoke in venv, used for call shell command)
+  > pip install PyYAML (install PyYAML in venv, used for parse yaml file)
   > deactivate (if want to leave venv)
 ```
 install developing ap cli package
@@ -39,9 +39,19 @@ install developing ap cli package
   > pip install --editable .
   > which ap
 ```
-install developing ap cli package
+Use ap job create command to create ap template
 ```
   > ap job create [-n / --name] ap0001 [-l / --language] python -t [default / tag_name]
   > ap job create -n ap0001 -l python [-t default]
   > ap job create --name ap0001 --language python [--tag default]
+```
+Use ap job build command to build ap docker image and dependency lib
+```
+  > cd ap0001
+  > ap job build (in ap project folder)
+```
+Use ap job run command to run ap locally
+```
+  > cd ap0001
+  > ap job run (in ap project folder)
 ```
