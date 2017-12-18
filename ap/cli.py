@@ -1,7 +1,7 @@
 import os
 import sys
 import click
-from ap.utils import read_config
+from ap.utils import read_ap_config
 
 CONTEXT_SETTINGS = dict(auto_envvar_prefix='AP')
 
@@ -13,7 +13,7 @@ class Context(object):
         self.templates = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                       'templates'))
         config_file = os.path.join(self.home, '.ap.yml')
-        self.configs = read_config(config_file)
+        self.configs = read_ap_config(config_file)
 
 
 cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),

@@ -13,12 +13,12 @@ This package provides a command line interface to create, build, deploy AWS Batc
 - [x] ap job build (for AP local build)
 - [x] ap job run (for AP local run)
 - [ ] ap job deploy (for deploy AP to Cloud workflow)
-- [ ] ap job info (for get AP info)
+- [x] ap job info (for get AP info)
 - [ ] ap job log [--watch] (for retrieve AP log)
 - [ ] ap config [subcommand] (for AP CLI config)
 - [ ] ap notify [subcommand] (for create AP notify)
 - [ ] ap resource [subcommand] (for create aws resource)
-- [ ] ap switch [subcommand] (for switch env)
+- [ ] ap switch env [--name] (for switch env)
 
 
 install virtualenv (if need)
@@ -54,4 +54,9 @@ Use ap job run command to run ap locally
 ```
   > cd ap0001
   > ap job run (in ap project folder)
+```
+Use ap job info command to get ap information
+```
+  > cd ap0001
+  > ap job info (in ap project folder)
 ```

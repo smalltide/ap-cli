@@ -1,14 +1,14 @@
 import click
 import os
 from invoke import run as run_command
+from ap.utils import generate_ap_job, is_ap
 from ap.cli import pass_context
-from ap.utils import generate_ap, is_ap
 
 
 @click.group()
 @click.pass_context
 def cli(ctx):
-    """AP Job, create, build, run, deploy, info, log"""
+    """Job create, build, run, deploy, info, log"""
     if ctx.invoked_subcommand not in ('create',):
         is_ap(ctx.obj.configs)
 
@@ -31,7 +31,7 @@ def create(ctx, name, language, tag):
             'The template not exists, please choose right language and tag of template')
 
     parameters = {'name': name, 'type': 'job'}
-    generate_ap(target, template, parameters)
+    generate_ap_job(target, template, parameters)
 
 
 @cli.command()
@@ -65,13 +65,19 @@ def run(ctx):
 def deploy():
     """Trigger AP Job Travis CI/CD Flow on Cloud"""
     click.echo(f'Deploy')
-    click.echo(click.get_app_dir('aws', force_posix=True))
 
 
 @cli.command()
-def info():
+@pass_context
+def info(ctx):
     """Retrieve AP Job Info"""
-    click.echo(f'Info')
+    configs = ctx.configs
+
+    click.secho(f'AP Job Info:', fg='green', bold=True)
+    click.secho(f'  Name: {configs["name"]}', fg='green')
+    click.secho(f'  Type: AP Job', fg='green')
+    click.secho(f'  Environment: {configs["environment"]}', fg='green')
+    click.secho(f'  APP Path: {configs["app_path"]}', fg='green')
 
 
 @cli.command()

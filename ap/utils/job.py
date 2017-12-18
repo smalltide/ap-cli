@@ -4,27 +4,7 @@ import yaml
 from jinja2 import Environment, FileSystemLoader
 
 
-def read_config(file):
-    configs = None
-
-    if not os.path.isfile(file):
-        return configs
-
-    with open(file, 'r') as stream:
-        try:
-            configs = yaml.load(stream)
-        except yaml.YAMLError as exc:
-            click.echo(exc)
-
-    return configs
-
-
-def is_ap(config):
-    if not config:
-        raise click.ClickException('Not in AP Folder or AP Config Error!')
-
-
-def generate_ap(target_folder, template_folder, parameters):
+def generate_ap_job(target_folder, template_folder, parameters):
     click.secho(
         f'Creating AP Job Template in {target_folder}.', fg='green', bold=True)
 
@@ -41,3 +21,19 @@ def generate_ap(target_folder, template_folder, parameters):
 
         click.secho(f'  Create  ', nl=False, fg='green')
         click.echo(template)
+
+
+def write_ap_job_config(config_file, configs):
+    result = False
+
+    if not os.path.isfile(config_file):
+        return result
+
+    with open(config_file, 'w') as stream:
+        try:
+            yaml.dump(configs, stream, default_flow_style=False)
+            result = True
+        except yaml.YAMLError as exc:
+            click.echo(exc)
+
+    return result
