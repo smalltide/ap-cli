@@ -1,6 +1,6 @@
 import os
 import click
-import yaml
+from ruamel.yaml import YAML, error
 
 
 def read_ap_config(file):
@@ -11,8 +11,9 @@ def read_ap_config(file):
 
     with open(file, 'r') as stream:
         try:
+            yaml = YAML()
             configs = yaml.load(stream)
-        except yaml.YAMLError as exc:
+        except error.YAMLError as exc:
             click.echo(exc)
 
     return configs

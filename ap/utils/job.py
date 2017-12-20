@@ -1,6 +1,6 @@
 import os
 import click
-import yaml
+from ruamel.yaml import YAML, error
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -31,9 +31,10 @@ def write_ap_job_config(config_file, configs):
 
     with open(config_file, 'w') as stream:
         try:
-            yaml.dump(configs, stream, default_flow_style=False)
+            yaml = YAML()
+            yaml.dump(configs, stream)
             result = True
-        except yaml.YAMLError as exc:
+        except error.YAMLError as exc:
             click.echo(exc)
 
     return result

@@ -18,7 +18,7 @@ This package provides a command line interface to create, build, deploy AWS Batc
 - [ ] ap config [subcommand] (for AP CLI config)
 - [ ] ap notify [subcommand] (for create AP notify)
 - [ ] ap resource [subcommand] (for create aws resource)
-- [ ] ap switch env [--name] (for switch env)
+- [x] ap switch env [--name] (for switch target deploy environment)
 
 
 install virtualenv (if need)
@@ -31,7 +31,7 @@ install virtualenv (if need)
   > pip install boto3 (install boto3 in venv, AWS Python SDK)
   > pip install Jinja2 (install Jinja2 in venv, Python template Engine)
   > pip install invoke (install invoke in venv, used for call shell command)
-  > pip install PyYAML (install PyYAML in venv, used for parse yaml file)
+  > pip install ruamel.yaml (install uamel.yaml in venv, used for parse yaml file)
   > deactivate (if want to leave venv)
 ```
 install developing ap cli package
@@ -41,22 +41,34 @@ install developing ap cli package
 ```
 Use ap job create command to create ap template
 ```
-  > ap job create [-n / --name] ap0001 [-l / --language] python -t [default / tag_name]
+  > ap job create [-n / --name] ap0001 [-l / --language] python [-t / --tag] (default / tag_name)
   > ap job create -n ap0001 -l python [-t default]
   > ap job create --name ap0001 --language python [--tag default]
 ```
 Use ap job build command to build ap docker image and dependency lib
 ```
   > cd ap0001
-  > ap job build (in ap project folder)
+  > ap job build
 ```
 Use ap job run command to run ap locally
 ```
   > cd ap0001
-  > ap job run (in ap project folder)
+  > ap job run
 ```
 Use ap job info command to get ap information
 ```
   > cd ap0001
-  > ap job info (in ap project folder)
+  > ap job info
+```
+Use ap switch env command to switch Target Deploy Environment
+```
+  > cd ap0001
+  > ap switch env [-n / --name] (dev / stg /prod)
+  > ap switch env
+  > ap switch env -n dev
+  > ap switch env --name dev
+  > ap switch env -n stg
+  > ap switch env --name stg
+  > ap switch env -n stg
+  > ap switch env --name stg
 ```

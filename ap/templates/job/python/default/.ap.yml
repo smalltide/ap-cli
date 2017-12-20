@@ -1,4 +1,4 @@
 name: {{ name }}
 type: {{ type }}
-environment: ap-dev
+environment: ap-{{ type }}-{{ name }}-dev
 app_path: /usr/src/app
