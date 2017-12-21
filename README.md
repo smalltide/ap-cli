@@ -15,7 +15,7 @@ This package provides a command line interface to create, build, deploy AWS Batc
 - [ ] ap job deploy (for deploy AP to Cloud workflow)
 - [x] ap job info (for get AP info)
 - [ ] ap job log [--watch] (for retrieve AP log)
-- [ ] ap config [subcommand] (for AP CLI config)
+- [x] ap config aws (for AP CLI config)
 - [ ] ap notify [subcommand] (for create AP notify)
 - [ ] ap resource [subcommand] (for create aws resource)
 - [x] ap switch env [--name] (for switch target deploy environment)
@@ -63,12 +63,25 @@ Use ap job info command to get ap information
 Use ap switch env command to switch Target Deploy Environment
 ```
   > cd ap0001
-  > ap switch env [-n / --name] (dev / stg /prod)
+  > ap switch env [-p / --profile] (dev / stg /prod)
   > ap switch env
-  > ap switch env -n dev
-  > ap switch env --name dev
-  > ap switch env -n stg
-  > ap switch env --name stg
-  > ap switch env -n stg
-  > ap switch env --name stg
+  > ap switch env -p dev
+  > ap switch env --profile dev
+  > ap switch env -p stg
+  > ap switch env --profile stg
+  > ap switch env -p prod
+  > ap switch env --profile prod
 ```
+Use ap config aws command to Set AWS Environment Parameters
+```
+  > cd ap0001
+  > ap config aws [-p / --profile] (dev / stg /prod)
+  > ap config aws
+  > ap config aws -p dev
+  > ap config aws --profile dev
+  > ap config aws -p stg
+  > ap config aws --profile stg
+  > ap config aws -p prod
+  > ap config aws --profile prod
+```
+

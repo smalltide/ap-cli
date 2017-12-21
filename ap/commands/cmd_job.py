@@ -20,12 +20,14 @@ def cli(ctx):
 @pass_context
 def create(ctx, name, language, tag):
     """Create a AP Job Template"""
-    target = os.path.join(ctx.home, name)
+    home, templates = ctx.home, ctx.templates
+
+    target = os.path.join(home, name)
     if os.path.exists(target):
         raise click.ClickException(
             'Existing directory here, please run create command for an empty folder!')
 
-    template = os.path.join(ctx.templates, 'job', language, tag)
+    template = os.path.join(templates, 'job', language, tag)
     if not os.path.exists(template):
         raise click.ClickException(
             'The template not exists, please choose right language and tag of template')
@@ -38,9 +40,11 @@ def create(ctx, name, language, tag):
 @pass_context
 def build(ctx):
     """Build AP Job Docker Image"""
-    cmd = f'docker image rm ap/{ctx.configs["name"]}'
+    name = ctx.configs["name"]
+
+    cmd = f'docker image rm ap/{name}'
     result = run_command(cmd, warn=True)
-    cmd = f'docker build -t ap/{ctx.configs["name"]} .'
+    cmd = f'docker build -t ap/{name} .'
     result = run_command(cmd, warn=True)
     if result.ok:
         click.secho(f'Build AP Successful', fg='green', bold=True)
@@ -52,8 +56,11 @@ def build(ctx):
 @pass_context
 def run(ctx):
     """Run AP Job on Local"""
+    home, name, app_path, environment = ctx.home, ctx.configs[
+        'name'], ctx.configs['app_path'], ctx.configs['environment']
     aws_folder = click.get_app_dir('aws', force_posix=True)
-    cmd = f'docker run -e HOME=/home -v {ctx.home}/app:{ctx.configs["app_path"]} -v {aws_folder}:/home/.aws --rm ap/{ctx.configs["name"]}'
+
+    cmd = f'docker run -e HOME=/home -e AWS_PROFILE={environment} -v {home}/app:{app_path} -v {aws_folder}:/home/.aws --rm ap/{name}'
     result = run_command(cmd, warn=True)
     if result.ok:
         click.secho(f'Run AP Successful', fg='green', bold=True)
@@ -71,13 +78,13 @@ def deploy():
 @pass_context
 def info(ctx):
     """Retrieve AP Job Info"""
-    configs = ctx.configs
+    name, environment, app_path = ctx.configs['name'], ctx.configs['environment'], ctx.configs['app_path']
 
     click.secho(f'AP Job Info:', fg='green', bold=True)
-    click.secho(f'  Name: {configs["name"]}', fg='green')
+    click.secho(f'  Name: {name}', fg='green')
     click.secho(f'  Type: AP Job', fg='green')
-    click.secho(f'  Environment: {configs["environment"]}', fg='green')
-    click.secho(f'  APP Path: {configs["app_path"]}', fg='green')
+    click.secho(f'  Environment: {environment}', fg='green')
+    click.secho(f'  APP Path: {app_path}', fg='green')
 
 
 @cli.command()

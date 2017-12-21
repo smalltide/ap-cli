@@ -22,3 +22,7 @@ def read_ap_config(file):
 def is_ap(config):
     if not config:
         raise click.ClickException('Not in AP Folder or AP Config Error!')
+
+
+def get_ap_env(ap_type, ap_name, env):
+    return f'ap-{ap_type}-{ap_name}-{env}'
