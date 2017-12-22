@@ -26,3 +26,19 @@ def is_ap(config):
 
 def get_ap_env(ap_type, ap_name, env):
     return f'ap-{ap_type}-{ap_name}-{env}'
+
+
+def is_text_in_file(text, file):
+    result = False
+
+    if not os.path.isfile(file):
+        return result
+
+    with open(file, 'r') as stream:
+        try:
+            if text in stream.read():
+                result = True
+        except Exception as exc:
+            click.echo(exc)
+
+    return result

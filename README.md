@@ -15,7 +15,8 @@ This package provides a command line interface to create, build, deploy AWS Batc
 - [ ] ap job deploy (for deploy AP to Cloud workflow)
 - [x] ap job info (for get AP info)
 - [ ] ap job log [--watch] (for retrieve AP log)
-- [x] ap config aws (for AP CLI config)
+- [x] ap config aws (for AP AWS CLI config)
+- [x] ap config github (for Link AP to GitHub Repository)
 - [ ] ap notify [subcommand] (for create AP notify)
 - [ ] ap resource [subcommand] (for create aws resource)
 - [x] ap switch env [--name] (for switch target deploy environment)
@@ -84,4 +85,24 @@ Use ap config aws command to Set AWS Environment Parameters
   > ap config aws -p prod
   > ap config aws --profile prod
 ```
-
+Use ap config aws command to Set AWS Environment Parameters
+```
+  > cd ap0001
+  > ap config aws [-p / --profile] (dev / stg /prod)
+  > ap config aws
+  > ap config aws -p dev
+  > ap config aws --profile dev
+  > ap config aws -p stg
+  > ap config aws --profile stg
+  > ap config aws -p prod
+  > ap config aws --profile prod
+```
+Use ap config github command to Link AP to GitHub Repository
+```
+  > cd ap0001
+  > ap config github [-a / --account] (github account) [-r / --repository] (repository name)
+  > ap config github -r ap0001
+  > ap config github --repository ap0001
+  > ap config github -a 104corp -r ap0001 
+  > ap config github --account 104corp --repository ap0001 
+```
