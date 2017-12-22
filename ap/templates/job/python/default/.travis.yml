@@ -13,15 +13,12 @@ jobs:
     - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/ap/$AP_NAME:latest
   - stage: run ap tests
     script: echo "Test1 Finish"
-  - script: echo "Test2 Finish"
   - stage: deploy ap to aws batch
-    script:
-    - aws cloudformation create-stack --stack-name $AP_NAME --template-body file://definition.yaml
-      --parameters file://parameters.json --capabilities CAPABILITY_IAM
+    script: skip
 notifications:
   slack:
     on_pull_requests: true
     rooms:
-      secure: NPWj4M5S4wYQVPNwtHSTvWbv3/gFjrFzITqtsFaheQ4pqB1nAPhj5xNT8heQzFLdKLO9VOXQmC42G5qc+Z7k2P9jeiy/v2DRJPKHoYJn3tMaP+JJk4kpW56NNFW+k4qX7gIK8kup4SFVk13P9nFn2N2jc+oPkmSQFioZ7lqpM4aRe21fq1mB27MmvP6bO84DyQrJ+NjQbPE+tgH4WkFZDcIzQlnPg7+m5EceXOJpr07oT3FecB2TEq/xOFYldJb2X+6C7RK2ML4/O9IuaxOB/LgaNiQtEz+OJsfFjzxwuhybnr5u3wKqI2ihXhPn0erJM6aI7/+mM6pemoMwraZK5zmwN9XfbZIEQOnyxDkokZO1G0QRu1HQTaQJhIBv9KedIFa/xUKnhyywTGNpGpngb8LP/F+VzjbJ2/sfrIWiB8K3pF5aytTQUexj3ldwiPdWL/SYbkPJ5O/0AqxCGofK9Rp+Nb0f9YrlHJqbMa2mkinxZ78WahXQD4QphBbXjwMWrvw7Msk9dJapohYoLCADXRJVmwG+n4waDVzxt613qOw25hVJLv2G//v1tdJOBzMw8PWlT+ugFwOUbTy59xbpZOBMDDf5355yUS4L8Il1FGjhI7nQMhCXdtJlCdZS38zQXks+u9suBymaaqIGTFftv1yDM6WFGnDZJMvXQttYa9Q=
+      secure: ""
     on_success: always
     on_failure: always

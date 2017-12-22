@@ -6,5 +6,9 @@
   {
     "ParameterKey": "Queue",
     "ParameterValue": "APJobQueue"
+  },
+  {
+    "ParameterKey": "CronTime",
+    "ParameterValue": "(0/1 * * * ? *)"
   }
 ]
