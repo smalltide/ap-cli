@@ -106,3 +106,17 @@ Use ap config github command to Link AP to GitHub Repository
   > ap config github -a 104corp -r ap0001 
   > ap config github --account 104corp --repository ap0001 
 ```
+Use ap notify slack command to add Slack Notify
+```
+  > cd ap0001
+  > ap notify slack [-s / --source] (trigger source) [-a / --account] (slack account) [-t / --token] (slack travis token) [-c / --channel] (slack channel)
+  > ap notify slack --source travis --token access_token --channel ap-build
+  > ap notify slack --token access_token --channel ap-build
+  > ap notify slack -t access_token -c ap-build
+```
+
+
+ 
+
+
+
