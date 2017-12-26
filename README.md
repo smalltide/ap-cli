@@ -12,12 +12,12 @@ This package provides a command line interface to create, build, deploy AWS Batc
 - [ ] ap job lint (plan?)
 - [x] ap job build (for AP local build)
 - [x] ap job run (for AP local run)
-- [ ] ap job deploy (for deploy AP to Cloud workflow)
+- [x] ap job deploy (for deploy AP to Cloud workflow)
 - [x] ap job info (for get AP info)
 - [ ] ap job log [--watch] (for retrieve AP log)
 - [x] ap config aws (for AP AWS CLI config)
 - [x] ap config github (for Link AP to GitHub Repository)
-- [ ] ap notify [subcommand] (for create AP notify)
+- [x] ap notify slack (for create AP notify)
 - [ ] ap resource [subcommand] (for create aws resource)
 - [x] ap switch env [--name] (for switch target deploy environment)
 
@@ -56,34 +56,16 @@ Use ap job run command to run ap locally
   > cd ap0001
   > ap job run
 ```
+Use ap job deploy command deploy ap job
+```
+  > cd ap0001
+  > ap job deploy
+  > ap job deploy --auto-push-message "ap0001 init" (auto push commit to github)
+```
 Use ap job info command to get ap information
 ```
   > cd ap0001
   > ap job info
-```
-Use ap switch env command to switch Target Deploy Environment
-```
-  > cd ap0001
-  > ap switch env [-p / --profile] (dev / stg /prod)
-  > ap switch env
-  > ap switch env -p dev
-  > ap switch env --profile dev
-  > ap switch env -p stg
-  > ap switch env --profile stg
-  > ap switch env -p prod
-  > ap switch env --profile prod
-```
-Use ap config aws command to Set AWS Environment Parameters
-```
-  > cd ap0001
-  > ap config aws [-p / --profile] (dev / stg /prod)
-  > ap config aws
-  > ap config aws -p dev
-  > ap config aws --profile dev
-  > ap config aws -p stg
-  > ap config aws --profile stg
-  > ap config aws -p prod
-  > ap config aws --profile prod
 ```
 Use ap config aws command to Set AWS Environment Parameters
 ```
@@ -114,9 +96,15 @@ Use ap notify slack command to add Slack Notify
   > ap notify slack --token access_token --channel ap-build
   > ap notify slack -t access_token -c ap-build
 ```
-
-
- 
-
-
-
+Use ap switch env command to switch Target Deploy Environment
+```
+  > cd ap0001
+  > ap switch env [-p / --profile] (dev / stg /prod)
+  > ap switch env
+  > ap switch env -p dev
+  > ap switch env --profile dev
+  > ap switch env -p stg
+  > ap switch env --profile stg
+  > ap switch env -p prod
+  > ap switch env --profile prod
+```

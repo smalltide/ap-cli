@@ -12,7 +12,12 @@ def cli(ctx):
 
 
 @cli.command()
-@click.option('-p', '--profile', default='dev', type=click.Choice(['dev', 'stg', 'prod']), help='Target Environment Name')
+@click.option(
+    '-p',
+    '--profile',
+    default='dev',
+    type=click.Choice(['dev', 'stg', 'prod']),
+    help='Target Environment Name')
 @pass_context
 def env(ctx, profile):
     """Set AP Target Environment Name"""
@@ -25,6 +30,6 @@ def env(ctx, profile):
 
         write_ap_job_config(config_file, configs)
 
-        click.secho(f'Switch Target Environment to ',
-                    nl=False, fg='green', bold=True)
+        click.secho(
+            f'Switch Target Environment to ', nl=False, fg='green', bold=True)
         click.secho(f'{profile}', fg='red', bold=True)

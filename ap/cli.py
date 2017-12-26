@@ -7,22 +7,25 @@ CONTEXT_SETTINGS = dict(auto_envvar_prefix='AP')
 
 
 class Context(object):
-
     def __init__(self):
+        self.job_env = {
+            'dev': '282921537141',
+            'stg': '032103997281',
+            'prod': '246337598720'
+        }
         self.home = os.getcwd()
-        self.templates = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                      'templates'))
+        self.templates = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), 'templates'))
         config_file = os.path.join(self.home, '.ap.yml')
         self.configs = read_ap_config(config_file)
 
 
-cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                          'commands'))
+cmd_folder = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), 'commands'))
 pass_context = click.make_pass_decorator(Context, ensure=True)
 
 
 class APCLI(click.MultiCommand):
-
     def list_commands(self, ctx):
         rv = []
         for filename in os.listdir(cmd_folder):

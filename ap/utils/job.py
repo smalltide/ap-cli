@@ -8,9 +8,7 @@ def generate_ap_job(target_folder, template_folder, parameters):
     click.secho(
         f'Creating AP Job Template in {target_folder}.', fg='green', bold=True)
 
-    env = Environment(
-        loader=FileSystemLoader(template_folder)
-    )
+    env = Environment(loader=FileSystemLoader(template_folder))
     for template in env.list_templates():
         template_path = os.path.join(target_folder, template)
         os.makedirs(os.path.dirname(template_path), exist_ok=True)

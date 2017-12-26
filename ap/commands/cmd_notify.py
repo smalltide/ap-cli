@@ -25,11 +25,15 @@ def slack(ctx, source, account, token, channel):
         result = run_command(cmd, warn=True)
 
         if result.ok:
-            click.secho(f'Add Slack Notify in Travis Config Successful',
-                        fg='green', bold=True)
+            click.secho(
+                f'Add Slack Notify in Travis Config Successful',
+                fg='green',
+                bold=True)
         else:
-            click.secho(f'Add Slack Notify in Travis Config Failure',
-                        fg='red', bold=True)
+            click.secho(
+                f'Add Slack Notify in Travis Config Failure',
+                fg='red',
+                bold=True)
     else:
         click.secho(
             f'No Support This Trigger Source: {source}', fg='red', bold=True)
