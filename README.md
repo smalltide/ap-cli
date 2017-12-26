@@ -18,9 +18,8 @@ This package provides a command line interface to create, build, deploy AWS Batc
 - [x] ap config aws (for AP AWS CLI config)
 - [x] ap config github (for Link AP to GitHub Repository)
 - [x] ap notify slack (for create AP notify)
-- [ ] ap resource [subcommand] (for create aws resource)
 - [x] ap switch env [--name] (for switch target deploy environment)
-
+- [ ] ap resource [subcommand] (for create aws resource)
 
 install virtualenv (if need)
 ```

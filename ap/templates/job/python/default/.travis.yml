@@ -19,6 +19,5 @@ notifications:
   slack:
     on_pull_requests: true
     rooms:
-      secure: ""
     on_success: always
     on_failure: always
