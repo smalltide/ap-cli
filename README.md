@@ -9,6 +9,7 @@ This package provides a command line interface to create, build, deploy AWS Batc
 - [x] ap --version
 - [x] ap --help
 - [x] ap job create [--name] [--language] (for create a new AP template)
+- [x] ap job init [--name] [--language] (for generate AP template in existing folder)
 - [ ] ap job lint (plan?)
 - [x] ap job build (for AP local build)
 - [x] ap job run (for AP local run)
@@ -44,6 +45,13 @@ Use ap job create command to create ap template
   > ap job create [-n / --name] ap0001 [-l / --language] python [-t / --tag] (default / tag_name)
   > ap job create -n ap0001 -l python [-t default]
   > ap job create --name ap0001 --language python [--tag default]
+```
+Use ap job init command to generate AP template in existing folder
+```
+  > cd existing_folder
+  > ap job init [-n / --name] ap0001 [-l / --language] python [-t / --tag] (default / tag_name)
+  > ap job init -n ap0001 -l python [-t default]
+  > ap job init --name ap0001 --language python [--tag default]
 ```
 Use ap job build command to build ap docker image and dependency lib
 ```

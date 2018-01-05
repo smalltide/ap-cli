@@ -9,7 +9,7 @@ from ap.cli import pass_context
 @click.pass_context
 def cli(ctx):
     """Job create, build, run, deploy, info, log"""
-    if ctx.invoked_subcommand not in ('create', ):
+    if ctx.invoked_subcommand not in ('create', 'init'):
         is_ap(ctx.obj.configs)
 
 
@@ -25,17 +25,42 @@ def create(ctx, name, language, tag):
     target = os.path.join(home, name)
     if os.path.exists(target):
         raise click.ClickException(
-            'Existing directory here, please run create command for an empty folder!'
+            f'Existing {name} directory here, please run create command for another name!'
         )
 
     template = os.path.join(templates, 'job', language, tag)
     if not os.path.exists(template):
         raise click.ClickException(
-            'The template not exists, please choose right language and tag of template'
+            f'The template not exists, please choose right language and tag of template'
         )
 
     parameters = {'name': name, 'type': 'job'}
     generate_ap_job(target, template, parameters)
+
+
+@cli.command()
+@click.option('-n', '--name', required=True, help='AP Name or Number')
+@click.option('-l', '--language', required=True, help='AP Template Language')
+@click.option('-t', '--tag', default='default', help='AP Language Tag')
+@pass_context
+def init(ctx, name, language, tag):
+    """Initial a AP Job Template in Existing Folder"""
+    home, templates = ctx.home, ctx.templates
+
+    ap_config = os.path.join(home, '.ap.yml')
+    if os.path.isfile(ap_config):
+        raise click.ClickException(
+            f'Existing AP template, please run init command for an empty folder!'
+        )
+
+    template = os.path.join(templates, 'job', language, tag)
+    if not os.path.exists(template):
+        raise click.ClickException(
+            f'The template not exists, please choose right language and tag of template'
+        )
+
+    parameters = {'name': name, 'type': 'job'}
+    generate_ap_job(home, template, parameters)
 
 
 @cli.command()
