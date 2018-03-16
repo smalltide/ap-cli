@@ -4,23 +4,26 @@ This package provides a command line interface to create, build, deploy AWS Batc
 ### Skills
 1. click (Python CLI Framework)
 2. boto3 (AWS SDK for Python)
+3. Jinja2 (Python Template Engine)
+4. invoke (Python Call Shell Command)
+5. ruamel.yaml (Python Parse Yaml) 
 
 ### AP CLI Command
 - [x] ap --version
 - [x] ap --help
 - [x] ap job create [--name] [--language] (for create a new AP template)
 - [x] ap job init [--name] [--language] (for generate AP template in existing folder)
-- [ ] ap job lint (plan?)
 - [x] ap job build (for AP local build)
 - [x] ap job run (for AP local run)
 - [x] ap job deploy (for deploy AP to Cloud workflow)
 - [x] ap job info (for get AP info)
-- [ ] ap job log [--watch] (for retrieve AP log)
+- [ ] ap job log [--date?] [--limit] [--watch?] (for retrieve AP log)
 - [x] ap config aws (for AP AWS CLI config)
 - [x] ap config github (for Link AP to GitHub Repository)
 - [x] ap notify slack (for create AP notify)
 - [x] ap switch env [--name] (for switch target deploy environment)
-- [ ] ap resource [subcommand] (for create aws resource)
+- [ ] ap job lint (plan?)
+- [ ] ap resource [subcommand] (for create aws resource, plan?)
 
 install virtualenv (if need)
 ```
@@ -73,6 +76,12 @@ Use ap job info command to get ap information
 ```
   > cd ap0001
   > ap job info
+```
+Use ap job log command to get ap logs
+```
+  > cd ap0001
+  > ap job log
+  > ap job log [-l / --limit]
 ```
 Use ap config aws command to Set AWS Environment Parameters
 ```

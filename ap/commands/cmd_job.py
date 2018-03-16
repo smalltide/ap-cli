@@ -1,5 +1,7 @@
 import click
 import os
+import boto3
+from datetime import datetime, timezone
 from invoke import run as run_command
 from ap.utils import generate_ap_job, is_ap, is_text_in_file
 from ap.cli import pass_context
@@ -119,20 +121,12 @@ def deploy(ctx, auto_push_message):
             fg='green',
             bold=True)
     else:
-        region = run_command(
-            f'aws configure get region --profile {environment}',
-            warn=True,
-            hide='out').stdout.strip()
-        key_id = run_command(
-            f'aws configure get aws_access_key_id --profile {environment}',
-            warn=True,
-            hide='out').stdout.strip()
-        access_key = run_command(
-            f'aws configure get aws_secret_access_key --profile {environment}',
-            warn=True,
-            hide='out').stdout.strip()
+        session = boto3.Session(profile_name=environment)
+        region = session.region_name
+        access_key = session.get_credentials().access_key
+        secret_key = session.get_credentials().secret_key
 
-        cmd = f'travis encrypt AP_NAME={name} AWS_ACCOUNT_ID={ctx.job_env[job_env]} AWS_DEFAULT_REGION={region} AWS_ACCESS_KEY_ID={key_id} AWS_SECRET_ACCESS_KEY={access_key} --override --add'
+        cmd = f'travis encrypt AP_NAME={name} AWS_ACCOUNT_ID={ctx.job_env[job_env]} AWS_DEFAULT_REGION={region} AWS_ACCESS_KEY_ID={access_key} AWS_SECRET_ACCESS_KEY={secret_key} --override --add'
         result = run_command(cmd, warn=True)
 
         if result.ok:
@@ -176,6 +170,46 @@ def info(ctx):
 
 
 @cli.command()
-def log():
+# @click.option(
+#     '-d',
+#     '--date',
+#     default='2018/03/14',
+#     help='The date of log events returned')
+@click.option(
+    '-l',
+    '--limit',
+    default=100,
+    help='The maximum number of log events returned, up to 10,000 log events')
+@pass_context
+def log(ctx, limit):
     """Retrieve or Monitor AP Job Log"""
-    click.echo(f'Log')
+    previous_timestamp = 0
+    limit = 10000 if limit > 10000 else limit
+
+    name, environment = ctx.configs['name'], ctx.configs['environment']
+
+    log_group_name = '/aws/batch/job'
+    name = 'ap0009/default/8f548ae4-4220-4e27-b02c-8e2b1ee4291a'
+
+    # log_group_name = '/aws/lambda/TriggerBatchAPJob'
+    # name = '2018/03/15/[$LATEST]9cabf1f85eff473b9e962011a27eb83d'
+
+    try:
+        session = boto3.Session(profile_name=environment)
+        client = session.client('logs')
+        response = client.get_log_events(
+            logGroupName=log_group_name, logStreamName=name, limit=limit)
+
+        for event in response['events']:
+            timestamp = int(event['timestamp'] / 1000)
+            if timestamp > previous_timestamp:
+                previous_timestamp = timestamp
+                log_utc_time = datetime.fromtimestamp(
+                    timestamp,
+                    timezone.utc).strftime('%Y/%m/%d %H:%M:%S+00:00 (UTC)')
+                click.secho(f'{log_utc_time}: ', fg='green', bold=True)
+
+            click.echo(event['message'].rstrip())
+
+    except client.exceptions.ResourceNotFoundException as exc:
+        click.secho(f'AP log not exists', fg='red', bold=True)
