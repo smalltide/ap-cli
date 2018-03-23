@@ -2,7 +2,7 @@ import boto3
 
 s3 = boto3.client('s3')
 
-bucket = 'apcomputeenvironment-aps3bucket-kozgwpitjy0n'
+bucket = 'privateapcomputeenvironment-aps3bucket-16arlqbgeklw9'
 key = '{{ name }}'
 
 try:
@@ -11,5 +11,7 @@ try:
     print("CONTENT: " + content)
 except Exception as e:
     print(e)
-    print('Error getting object {} from bucket {}. Make sure they exist and your bucket is in the same region as this function.'.format(key, bucket))
+    print(
+        'Error getting object {} from bucket {}. Make sure they exist and your bucket is in the same region as this function.'.
+        format(key, bucket))
     raise e
