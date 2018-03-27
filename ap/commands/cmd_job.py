@@ -1,9 +1,11 @@
 import click
 import os
+import time
 import boto3
-from datetime import datetime, timezone
+from boto3.dynamodb.conditions import Key, Attr
+
 from invoke import run as run_command
-from ap.utils import generate_ap_job, is_ap, is_text_in_file
+from ap.utils import generate_ap_job, is_ap, is_text_in_file, str_from_timestamp
 from ap.cli import pass_context
 
 
@@ -189,27 +191,56 @@ def log(ctx, limit):
     name, environment = ctx.configs['name'], ctx.configs['environment']
 
     log_group_name = '/aws/batch/job'
-    name = 'ap0009/default/8f548ae4-4220-4e27-b02c-8e2b1ee4291a'
-
-    # log_group_name = '/aws/lambda/TriggerBatchAPJob'
-    # name = '2018/03/15/[$LATEST]9cabf1f85eff473b9e962011a27eb83d'
+    log_stream = 'UNKNOWN'
+    job_id = 'UNKNOWN'
+    job_status = 'UNKNOWN'
 
     try:
         session = boto3.Session(profile_name=environment)
-        client = session.client('logs')
-        response = client.get_log_events(
-            logGroupName=log_group_name, logStreamName=name, limit=limit)
+        dynamodb = session.resource('dynamodb')
+        ap_jobs = dynamodb.Table('ap_jobs')
+        timestamp = int(time.time())
+
+        response = ap_jobs.query(
+            KeyConditionExpression=Key('name').eq(name) & Key('timestamp')
+            .between(timestamp - 120, timestamp))
+
+        jobs = response['Items']
+        for job in jobs:
+            timestamp_str = str_from_timestamp(job['timestamp'])
+            click.secho(f'{timestamp_str}: ', fg='green', bold=True)
+            click.echo(job['id'])
+
+        job_id = jobs[-1]['id'] if len(jobs) > 0 else 'UNKNOWN'
+
+        if job_id != 'UNKNOWN':
+            batch = session.client('batch')
+            response = batch.describe_jobs(jobs=[job_id])
+            jobs = response['jobs']
+            job = jobs[0] if len(jobs) > 0 else jobs
+
+            if job['status'] in ('RUNNING', 'SUCCEEDED', 'FAILED'):
+                log_stream = job['container']['logStreamName']
+
+            job_status = job['status']
+
+        logs = session.client('logs')
+        response = logs.get_log_events(
+            logGroupName=log_group_name, logStreamName=log_stream, limit=limit)
 
         for event in response['events']:
             timestamp = int(event['timestamp'] / 1000)
             if timestamp > previous_timestamp:
                 previous_timestamp = timestamp
-                log_utc_time = datetime.fromtimestamp(
-                    timestamp,
-                    timezone.utc).strftime('%Y/%m/%d %H:%M:%S+00:00 (UTC)')
-                click.secho(f'{log_utc_time}: ', fg='green', bold=True)
+                click.secho(
+                    f'{str_from_timestamp(timestamp)}: ',
+                    fg='green',
+                    bold=True)
 
             click.echo(event['message'].rstrip())
 
-    except client.exceptions.ResourceNotFoundException as exc:
-        click.secho(f'AP log not exists', fg='red', bold=True)
+    except logs.exceptions.ResourceNotFoundException as exc:
+        click.secho(
+            f'AP log not exists, job status: {job_status}',
+            fg='red',
+            bold=True)

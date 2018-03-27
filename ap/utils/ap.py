@@ -1,6 +1,7 @@
 import os
 import click
 from ruamel.yaml import YAML, error
+from datetime import datetime, timezone
 
 
 def read_ap_config(file):
@@ -42,3 +43,10 @@ def is_text_in_file(text, file):
             click.echo(exc)
 
     return result
+
+
+def str_from_timestamp(timestamp):
+    time_string = datetime.fromtimestamp(
+        timestamp, timezone.utc).strftime('%Y/%m/%d %H:%M:%S+00:00 (UTC)')
+
+    return time_string
