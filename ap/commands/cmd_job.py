@@ -178,68 +178,86 @@ def info(ctx):
 #     default='2018/03/14',
 #     help='The date of log events returned')
 @click.option(
+    '-j',
+    '--job-id',
+    default='UNKNOWN',
+    help='Specify the AP jod id to retrieve log')
+@click.option(
     '-l',
     '--limit',
+    default=5,
+    help='The maximum number of job logs returned, up to 50 logs')
+@click.option(
+    '-t',
+    '--tail',
     default=100,
-    help='The maximum number of log events returned, up to 10,000 log events')
+    help='The maximum number of log lines returned, up to 10,000 log lines')
 @pass_context
-def log(ctx, limit):
+def log(ctx, job_id, limit, tail):
     """Retrieve or Monitor AP Job Log"""
     previous_timestamp = 0
-    limit = 10000 if limit > 10000 else limit
+    limit = 50 if limit > 50 else limit
+    tail = 10000 if tail > 10000 else tail
 
     name, environment = ctx.configs['name'], ctx.configs['environment']
 
     log_group_name = '/aws/batch/job'
     log_stream = 'UNKNOWN'
-    job_id = 'UNKNOWN'
     job_status = 'UNKNOWN'
 
     try:
         session = boto3.Session(profile_name=environment)
-        dynamodb = session.resource('dynamodb')
-        ap_jobs = dynamodb.Table('ap_jobs')
-        timestamp = int(time.time())
 
-        response = ap_jobs.query(
-            KeyConditionExpression=Key('name').eq(name) & Key('timestamp')
-            .between(timestamp - 120, timestamp))
+        if job_id == 'UNKNOWN':
+            dynamodb = session.resource('dynamodb')
+            ap_jobs = dynamodb.Table('ap_jobs')
 
-        jobs = response['Items']
-        for job in jobs:
-            timestamp_str = str_from_timestamp(job['timestamp'])
-            click.secho(f'{timestamp_str}: ', fg='green', bold=True)
-            click.echo(job['id'])
+            response = ap_jobs.query(
+                KeyConditionExpression=Key('name').eq(name),
+                ScanIndexForward=False,
+                Limit=limit)
 
-        job_id = jobs[-1]['id'] if len(jobs) > 0 else 'UNKNOWN'
+            jobs = response['Items']
+            for job in jobs[::-1]:
+                timestamp_str = str_from_timestamp(job['timestamp'])
+                jid = job['id']
+                status = job['status']
+                click.secho(f'{timestamp_str}:', fg='green', bold=True)
+                click.echo(f'ID: {jid}, Status: {status}')
+
+            job_id = jobs[0]['id'] if len(jobs) > 0 else 'UNKNOWN'
 
         if job_id != 'UNKNOWN':
             batch = session.client('batch')
             response = batch.describe_jobs(jobs=[job_id])
             jobs = response['jobs']
+
             job = jobs[0] if len(jobs) > 0 else jobs
 
             if job['status'] in ('RUNNING', 'SUCCEEDED', 'FAILED'):
                 log_stream = job['container']['logStreamName']
-
             job_status = job['status']
 
-        logs = session.client('logs')
-        response = logs.get_log_events(
-            logGroupName=log_group_name, logStreamName=log_stream, limit=limit)
+        if log_stream != 'UNKNOWN':
+            logs = session.client('logs')
+            response = logs.get_log_events(
+                logGroupName=log_group_name,
+                logStreamName=log_stream,
+                limit=tail)
 
-        for event in response['events']:
-            timestamp = int(event['timestamp'] / 1000)
-            if timestamp > previous_timestamp:
-                previous_timestamp = timestamp
-                click.secho(
-                    f'{str_from_timestamp(timestamp)}: ',
-                    fg='green',
-                    bold=True)
+            for event in response['events']:
+                timestamp = int(event['timestamp'] / 1000)
+                if timestamp > previous_timestamp:
+                    previous_timestamp = timestamp
+                    click.secho(
+                        f'{str_from_timestamp(timestamp)}:',
+                        fg='green',
+                        bold=True)
 
-            click.echo(event['message'].rstrip())
+                click.echo(event['message'].rstrip())
 
-    except logs.exceptions.ResourceNotFoundException as exc:
+    except Exception as exc:
+        print(exc)
         click.secho(
             f'AP log not exists, job status: {job_status}',
             fg='red',

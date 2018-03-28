@@ -47,6 +47,6 @@ def is_text_in_file(text, file):
 
 def str_from_timestamp(timestamp):
     time_string = datetime.fromtimestamp(
-        timestamp, timezone.utc).strftime('%Y/%m/%d %H:%M:%S+00:00 (UTC)')
+        timestamp, timezone.utc).strftime('%Y/%m/%d %H:%M:%S (UTC+0)')
 
     return time_string
