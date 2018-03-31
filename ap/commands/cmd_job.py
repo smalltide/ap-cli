@@ -203,40 +203,38 @@ def log(ctx, job_id, limit, tail):
 
     log_group_name = '/aws/batch/job'
     log_stream = 'UNKNOWN'
-    job_status = 'UNKNOWN'
 
     try:
         session = boto3.Session(profile_name=environment)
+        dynamodb = session.resource('dynamodb')
+        ap_jobs = dynamodb.Table('ap_jobs')
+
+        if job_id != 'UNKNOWN':
+            response = ap_jobs.query(
+                KeyConditionExpression=Key('name').eq(name) & Key('id').eq(
+                    job_id))
 
         if job_id == 'UNKNOWN':
-            dynamodb = session.resource('dynamodb')
-            ap_jobs = dynamodb.Table('ap_jobs')
-
             response = ap_jobs.query(
+                IndexName='name-timestamp-index',
                 KeyConditionExpression=Key('name').eq(name),
                 ScanIndexForward=False,
                 Limit=limit)
 
-            jobs = response['Items']
-            for job in jobs[::-1]:
-                timestamp_str = str_from_timestamp(job['timestamp'])
-                jid = job['id']
-                status = job['status']
-                click.secho(f'{timestamp_str}:', fg='green', bold=True)
-                click.echo(f'ID: {jid}, Status: {status}')
+        jobs = response['Items']
+        for job in jobs[::-1]:
+            timestamp_str = str_from_timestamp(job['timestamp'])
+            jid = job['id']
+            status = job['status']
+            click.secho(f'{timestamp_str}:', fg='green', bold=True)
+            click.echo(f'ID: {jid}, Status: {status}')
 
-            job_id = jobs[0]['id'] if len(jobs) > 0 else 'UNKNOWN'
-
-        if job_id != 'UNKNOWN':
-            batch = session.client('batch')
-            response = batch.describe_jobs(jobs=[job_id])
-            jobs = response['jobs']
-
-            job = jobs[0] if len(jobs) > 0 else jobs
-
-            if job['status'] in ('RUNNING', 'SUCCEEDED', 'FAILED'):
-                log_stream = job['container']['logStreamName']
-            job_status = job['status']
+        if len(jobs) > 0:
+            job_id = jobs[0]['id']
+            log_stream = jobs[0]['log']
+        else:
+            click.secho(
+                f'AP log not exists, job id: {job_id}', fg='red', bold=True)
 
         if log_stream != 'UNKNOWN':
             logs = session.client('logs')
@@ -259,6 +257,4 @@ def log(ctx, job_id, limit, tail):
     except Exception as exc:
         print(exc)
         click.secho(
-            f'AP log not exists, job status: {job_status}',
-            fg='red',
-            bold=True)
+            f'AP log not exists, job id: {job_id}', fg='red', bold=True)

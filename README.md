@@ -17,12 +17,11 @@ This package provides a command line interface to create, build, deploy AWS Batc
 - [x] ap job run (for AP local run)
 - [x] ap job deploy (for deploy AP to Cloud workflow)
 - [x] ap job info (for get AP info)
-- [ ] ap job log [--date?] [--limit] [--watch?] (for retrieve AP log)
+- [ ] ap job log [--date?] [--job-id] [--limit] [--tail] (for retrieve AP log)
 - [x] ap config aws (for AP AWS CLI config)
 - [x] ap config github (for Link AP to GitHub Repository)
 - [x] ap notify slack (for create AP notify)
 - [x] ap switch env [--name] (for switch target deploy environment)
-- [ ] ap job lint (plan?)
 - [ ] ap resource [subcommand] (for create aws resource, plan?)
 
 install virtualenv (if need)
@@ -81,7 +80,11 @@ Use ap job log command to get ap logs
 ```
   > cd ap0001
   > ap job log
-  > ap job log [-l / --limit]
+  > ap job log [-l / --limit] 3
+  > ap job log [-j / --job-id] xxxx-xxxx-xxxx-xxxx
+  > ap job log [-j / --job-id] xxxx-xxxx-xxxx-xxxx [-t / --tail] 100
+  > ap job log [-l / --limit] 3 [-t / --tail] 100
+  > ap job log [-l / --limit] 1 [-t / --tail] 100
 ```
 Use ap config aws command to Set AWS Environment Parameters
 ```
