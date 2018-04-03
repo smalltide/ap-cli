@@ -1,8 +1,7 @@
 import click
 import os
-import time
 import boto3
-from boto3.dynamodb.conditions import Key, Attr
+from boto3.dynamodb.conditions import Key
 
 from invoke import run as run_command
 from ap.utils import generate_ap_job, is_ap, is_text_in_file, str_from_timestamp

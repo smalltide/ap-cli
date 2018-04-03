@@ -48,5 +48,7 @@ class APCLI(click.MultiCommand):
 @click.version_option()
 @pass_context
 def cli(ctx):
-    """This package provides a command line interface to use the create, build, deploy, log, notify and resource manager feature of AP2.0"""
+    """This package provides a command line interface
+    to use the create, build, deploy, log, notify
+    and resource manager feature of AP2.0"""
     pass

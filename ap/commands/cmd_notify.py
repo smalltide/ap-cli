@@ -1,7 +1,6 @@
-import os
 import click
 from invoke import run as run_command
-from ap.utils import is_ap, get_ap_env, is_text_in_file
+from ap.utils import is_ap
 from ap.cli import pass_context
 
 
